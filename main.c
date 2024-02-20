@@ -20,7 +20,7 @@
 
 #define KILOBYTE 1024
 #define BUF_SIZE 64*KILOBYTE
-#define PORT 8888
+#define PORT 8080
 
 const char *get_mime_type(const char *file_ext) {
     if (strcasecmp(file_ext, "html") == 0 || strcasecmp(file_ext, "htm") == 0) {
@@ -44,25 +44,23 @@ const char *get_file_extension(const char *filename) {
     return dot + 1;
 }
 
-// FIXME: Fix spaces not being decoded...
 char *url_decode(const char *src) {
     size_t src_len = strlen(src);
     char *decoded = malloc(src_len + 1);
     size_t decoded_len = 0;
 
     for (size_t i = 0; i < src_len; i++) {
-        printf("[DEBUG]: Decoding URL route one.\n");
-        if (src[(int)i] == '%' && (size_t)src + 2 < src_len) {
-            int hex_val;
+        if (src[(int)i] == '%' && i + 2 < src_len) {
+            unsigned int hex_val;
             sscanf(src + i + 1, "%2x", &hex_val);
             decoded[decoded_len++] = hex_val;
             i += 2;
         } else {
-        printf("[DEBUG]: Decoding URL route two.\n");
             decoded[decoded_len++] = src[i];
         }
     }
 
+    printf("[DEBUG]: Decoded URL - \"%s\"\n", decoded);
     decoded[decoded_len] = '\0';
     return decoded;
 }
@@ -71,7 +69,7 @@ void build_http_response(const char *filename, const char *file_ext, char *respo
     printf("[DEBUG]: Building HTTP response.\n");
     const char *mime_type = get_mime_type(file_ext);
     char *header = (char *)malloc(BUF_SIZE * sizeof(char));
-    printf("[INFO]: Setting header to 200 OK with content type %s.\n", mime_type);
+    printf("[INFO]: Setting header to 200 OK with content type \"%s\".\n", mime_type);
     snprintf(header, BUF_SIZE,
             "HTTP/1.1 200 OK\r\n"
             "Content-Type: %s\r\n"
@@ -90,10 +88,6 @@ void build_http_response(const char *filename, const char *file_ext, char *respo
         return;
     }
 
-    // struct stat file_stat;
-    // fstat(file_fd, &file_stat);
-    // off_t file_size = file_stat.st_size;
-
     *response_len = 0;
     memcpy(response, header, strlen(header));
     *response_len += strlen(header);
@@ -111,7 +105,7 @@ void *handle_client(void *arg) {
     char *buffer = (char *)malloc(BUF_SIZE * sizeof(char));
 
     ssize_t bytes_received = recv(client_fd, buffer, BUF_SIZE, 0);
-    printf("[INFO]: Bytes received: %lx\n", bytes_received);
+    printf("[INFO]: Bytes received: %ld\n", bytes_received);
     if (bytes_received > 0) {
         regex_t regex;
         regcomp(&regex, "^GET /([^ ]*) HTTP/1", REG_EXTENDED);
@@ -138,7 +132,6 @@ void *handle_client(void *arg) {
     close(client_fd);
     free(buffer);
     free(arg);
-    return;
 }
 
 int main(void) {

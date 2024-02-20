@@ -1,2 +1,10 @@
+CC := gcc
+CFLAGS := -Os -ggdb -Wall -Wextra -Wpedantic
+
+all: server
+
+clean: server
+	rm $^
+
 server: main.c
-	gcc -o server main.c -Os -ggdb -Wall -Wextra -Wpedantic
+	$(CC) -o $@ $^ $(CFLAGS)
