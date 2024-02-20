@@ -151,7 +151,7 @@ int main(void) {
     socklen_t server_info_len = sizeof(server_info);
     
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-        fprintf(stderr, "[ERR]: Initalizing socket failed.\n");
+        fprintf(stderr, "[ERROR]: Initalizing socket failed.\n");
         return server_fd;
     }
 
@@ -160,12 +160,12 @@ int main(void) {
     server_info.sin_port = htons(PORT);
 
     if ((bind_return=bind(server_fd, (struct sockaddr *)&server_info, server_info_len)) < 0) { 
-        fprintf(stderr, "[ERR]: Binding socket to port %d failed.\n", PORT);
+        fprintf(stderr, "[ERROR]: Binding socket to port %d failed.\n", PORT);
         return bind_return;
     }
 
     if ((listen_return=listen(server_fd, 0)) < 0) {
-        fprintf(stderr, "[ERR]: Listening for connections failed.\n");
+        fprintf(stderr, "[ERROR]: Listening for connections failed.\n");
         return listen_return;
     }
 
@@ -177,7 +177,7 @@ int main(void) {
     while (1) {
         int *client_fd = malloc(sizeof(int));
         if ((*client_fd=accept(server_fd, (struct sockaddr *)&client_info, &client_info_len)) < 0) {
-            fprintf(stderr, "[ERR]: Accepting client connection %d failed...\n", *client_fd);
+            fprintf(stderr, "[ERROR]: Accepting client connection %d failed...\n", *client_fd);
             return *client_fd;
         }
 

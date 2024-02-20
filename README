@@ -1,7 +1,7 @@
 Simple HTTP Server in C
 -----------------------
-A simple HTTP client in C that only supports GET request. At the time of
-writing doesn't work for files with spaces in them.
+A simple HTTP server in C that only supports GET request. At the time of
+writing the clinet doesn't work for files with spaces in them.
 
 # TODO: Make the server able to serve files with spaces. 2024.02.18 18:46:59 EEST
 # vim:syntax=conf
